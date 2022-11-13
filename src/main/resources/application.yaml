@@ -1,0 +1,33 @@
+
+spring:
+  jpa:
+    database: postgresql
+    hibernate:
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      ddl-auto: update
+
+    properties:
+      hibernate:
+        show_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_batch_fetch_size: 2
+
+  datasource:
+    hikari:
+      maximum-pool-size: 6
+    url: jdbc:postgresql://ec2-3-220-207-90.compute-1.amazonaws.com/ddq1b52jfbf7p7
+    username: mdgdlxfmdsomad
+    password: 2807e7e5699cdf03ba1260e88fb9f090cd52d34915d318777ca96674380466b7
+    driver-class-name: org.postgresql.Driver
+  sql:
+    init:
+      platform: postgres
+
+jwt:
+  secret-key: fast_campus.sns-application-2022.secret_key
+  token.expired-time-ms: 2592000000
+logging:
+  level:
+    org.hibernate.sql:
+
+#  config: classpath:logback-spring.xml
