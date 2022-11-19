@@ -1,6 +1,6 @@
 package com.fastcampus.sns.config;
 
-import com.fastcampus.sns.model.User;
+import com.fastcampus.sns.model.entity.UserEntity;
 import io.lettuce.core.RedisURI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -35,14 +35,14 @@ public class RedisConfiguration {
     }
 
     @Bean
-    public RedisTemplate<String, User> userRedisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, User> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String, UserEntity> userRedisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, UserEntity> redisTemplate = new RedisTemplate<>();
 
         redisTemplate.setConnectionFactory(
                 connectionFactory
         );
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<User>(User.class));
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<UserEntity>(UserEntity.class));
 
         return redisTemplate;
     }

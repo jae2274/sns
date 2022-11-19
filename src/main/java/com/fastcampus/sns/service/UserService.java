@@ -6,7 +6,6 @@ import com.fastcampus.sns.model.Alarm;
 import com.fastcampus.sns.model.User;
 import com.fastcampus.sns.model.entity.UserEntity;
 import com.fastcampus.sns.repository.AlarmEntityRepository;
-import com.fastcampus.sns.repository.UserCacheRepository;
 import com.fastcampus.sns.repository.UserRepository;
 import com.fastcampus.sns.util.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +16,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -26,7 +23,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final AlarmEntityRepository alarmEntityRepository;
-    private final UserCacheRepository userCacheRepository;
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -35,17 +31,12 @@ public class UserService {
     private Long expiredTimeMs;
 
     public User loadUserByUserName(String userName) {
-        Optional<User> userCache = userCacheRepository.getUser(userName);
 
-        return userCache.orElseGet(() -> {
-            User user = userRepository.findByUsername(userName)
-                    .map(userEntity -> User.fromEntity(userEntity))
-                    .orElseThrow(() -> new SnsApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s not found", userName)));
+        User user = userRepository.findByUsername(userName)
+                .map(userEntity -> User.fromEntity(userEntity))
+                .orElseThrow(() -> new SnsApplicationException(ErrorCode.USER_NOT_FOUND, String.format("%s not found", userName)));
 
-            userCacheRepository.setUser(user);
-            return user;
-        });
-
+        return user;
     }
 
     @Transactional
