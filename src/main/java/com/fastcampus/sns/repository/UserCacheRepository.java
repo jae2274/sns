@@ -1,11 +1,13 @@
 package com.fastcampus.sns.repository;
 
+import com.fastcampus.sns.config.RedisConfiguration;
 import com.fastcampus.sns.model.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
 import java.time.Duration;
 import java.util.Optional;
 
@@ -13,7 +15,8 @@ import java.util.Optional;
 @Repository
 @RequiredArgsConstructor
 public class UserCacheRepository {
-    private final RedisTemplate<String, UserEntity> userRedisTemplate;
+    @Resource(name = RedisConfiguration.USER_REDIS_TEMPLATE)
+    private RedisTemplate<String, UserEntity> userRedisTemplate;
     private final static Duration USER_CACHE_TTL = Duration.ofDays(3);
 
     public void setUser(UserEntity user) {

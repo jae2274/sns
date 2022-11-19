@@ -32,6 +32,8 @@ public class EmitterRepository {
     }
 
     public void delete(Integer userId) {
-        emitterMap.remove(getKey(userId));
+        SseEmitter sseEmitter = emitterMap.remove(getKey(userId));
     }
+
+
 }

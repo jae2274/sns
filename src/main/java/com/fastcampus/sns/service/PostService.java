@@ -2,10 +2,7 @@ package com.fastcampus.sns.service;
 
 import com.fastcampus.sns.exception.ErrorCode;
 import com.fastcampus.sns.exception.SnsApplicationException;
-import com.fastcampus.sns.model.AlarmArgs;
-import com.fastcampus.sns.model.AlarmType;
-import com.fastcampus.sns.model.Comment;
-import com.fastcampus.sns.model.Post;
+import com.fastcampus.sns.model.*;
 import com.fastcampus.sns.model.entity.*;
 import com.fastcampus.sns.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -84,7 +81,7 @@ public class PostService {
 
         likeEntityRepository.save(LikeEntity.of(userEntity, postEntity));
         AlarmEntity alarm = alarmEntityRepository.save(AlarmEntity.of(postEntity.getUser(), AlarmType.NEW_LIKE_ON_POST, new AlarmArgs(userEntity.getId(), postEntity.getId())));
-        alarmService.send(alarm.getId(), postEntity.getUser().getId());
+        alarmService.send(Alarm.fromEntity(alarm), postEntity.getUser().getId());
     }
 
     public long likeCount(Integer postId) {
@@ -100,7 +97,7 @@ public class PostService {
 
         commentEntityRepository.save(CommentEntity.of(userEntity, postEntity, comment));
         AlarmEntity alarm = alarmEntityRepository.save(AlarmEntity.of(postEntity.getUser(), AlarmType.NEW_COMMENT_ON_POST, new AlarmArgs(userEntity.getId(), postEntity.getId())));
-        alarmService.send(alarm.getId(), postEntity.getUser().getId());
+        alarmService.send(Alarm.fromEntity(alarm), postEntity.getUser().getId());
     }
 
     public Page<Comment> getComments(Integer postId, Pageable pageable) {
