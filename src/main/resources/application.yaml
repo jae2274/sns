@@ -1,7 +1,29 @@
 spring:
   redis:
     url: redis://localhost:6379
+  kafka:
+    consumer:
+      properties.spring.json.trusted.packages: com.fastcampus.sns.model.event
+      bootstrap-servers: 127.0.0.1:9092
+      group-id: alarm
+      auto-offset-reset: latest
+      key-deserializer: org.apache.kafka.common.serialization.IntegerDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
 
+    listener:
+      ack-mode: manual
+    producer:
+      bootstrap-servers: 127.0.0.1:9092
+      key-serializer: org.apache.kafka.common.serialization.IntegerSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties.enable.idempotence: false
+    #    properties:
+    #      security.protocol: SASL_SSL
+    #      sasl.mechanism: SCRAM-SHA-256
+    topic:
+      alarm: sns-alarm
+  
+  
   jpa:
     database: postgresql
     hibernate:

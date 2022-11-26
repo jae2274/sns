@@ -3,6 +3,12 @@ package com.fastcampus.sns.service;
 import com.fastcampus.sns.exception.ErrorCode;
 import com.fastcampus.sns.exception.SnsApplicationException;
 import com.fastcampus.sns.model.Alarm;
+import com.fastcampus.sns.model.AlarmArgs;
+import com.fastcampus.sns.model.AlarmType;
+import com.fastcampus.sns.model.entity.AlarmEntity;
+import com.fastcampus.sns.model.entity.UserEntity;
+import com.fastcampus.sns.repository.AlarmEntityRepository;
+import com.fastcampus.sns.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -23,6 +29,8 @@ public class AlarmService {
 
 
     private final RedisPublisher redisPublisher;
+    private final AlarmEntityRepository alarmEntityRepository;
+    private final UserRepository userRepository;
 
     public SseEmitter connectAlarm(Integer userId) {
         SseEmitter sseEmitter = new SseEmitter(DEFAULT_TIMEOUT);
@@ -46,7 +54,10 @@ public class AlarmService {
         return sseEmitter;
     }
 
-    public void send(Alarm alarm, Integer userId) {
-        redisPublisher.publish(new ChannelTopic(userId.toString()).getTopic(), alarm);
+    public void send(AlarmType type, AlarmArgs args, Integer receiverUserId) {
+        UserEntity userEntity = userRepository.findById(receiverUserId).orElseThrow(() -> new SnsApplicationException(ErrorCode.USER_NOT_FOUND));
+        AlarmEntity savedAlarm = alarmEntityRepository.save(AlarmEntity.of(userEntity, type, args));
+
+        redisPublisher.publish(new ChannelTopic(receiverUserId.toString()).getTopic(), Alarm.fromEntity(savedAlarm));
     }
 }

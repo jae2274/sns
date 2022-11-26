@@ -12,6 +12,17 @@ public class UserRepository {
     private final UserEntityRepository userEntityRepository;
     private final UserCacheRepository userCacheRepository;
 
+    public Optional<UserEntity> findById(Integer userId) {
+
+        Optional<UserEntity> userEntity = userEntityRepository.findById(userId);
+
+        userEntity.ifPresent(user -> {
+            userCacheRepository.setUser(user);
+        });
+
+        return userEntity;
+    }
+
     public Optional<UserEntity> findByUsername(String username) {
         Optional<UserEntity> cacheUser = userCacheRepository.getUser(username);
 
